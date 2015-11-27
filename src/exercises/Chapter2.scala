@@ -25,18 +25,18 @@ object Chapter2 extends App {
   println()
 
   // 6
-  var prod = 1
+  var prod = 1L
   for (i <- "Hello") { prod *= i }
   println(prod)
 
   // 7
-  prod = 1
+  prod = 1L
   "Hello".foreach((c: Char) => prod *= c)
   println(prod)
 
   // 8
   def product(s: String) = {
-    var prod = 1
+    var prod = 1L
     s.foreach((c: Char) => prod *= c)
     prod
   }
