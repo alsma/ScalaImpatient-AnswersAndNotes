@@ -15,9 +15,9 @@ object Chapter4 extends App {
   // 2
   {
     val in = new java.util.Scanner(new java.io.File("files/scanned-file.txt"))
-    val wordCounts = collection.mutable.Map[String, Int]() withDefault (_ => 0) // awesome
-    while (in hasNext) wordCounts(in next) += 1 // previous line's "awesome" makes this easy
-    println(wordCounts)
+    val occurrences = scala.collection.mutable.Map[String, Int]() withDefaultValue 0  // awesome
+    while(in.hasNext) occurrences(in.next) += 1 // previous line's "awesome" makes this easy
+    println(occurrences.toList.sortBy({_._2}).reverse)
   }
 
   // 3
