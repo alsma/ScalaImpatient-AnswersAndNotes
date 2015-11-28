@@ -30,22 +30,16 @@ object Chapter2 extends App {
   println(prod)
 
   // 7
-  prod = 1L
-  "Hello".foreach((c: Char) => prod *= c)
+  prod = "Hello".foldLeft(1L)(_ * _)
   println(prod)
 
   // 8
-  def product(s: String) = {
-    var prod = 1L
-    s.foreach((c: Char) => prod *= c)
-    prod
-  }
+  def product(s: String) = s.foldLeft(1L)(_ * _)
   println(product("Hello"))
 
   // 9
-  def productRec(s: String): Int = {
-    val tail = s.tail
-    s.head * (if (tail.size == 0) 1 else productRec(s.tail))
+  def productRec(s: String): Long = {
+    if (s.length == 1) s.head else s.head * productRecursive(s.tail)
   }
   println(productRec("Hello"))
 
