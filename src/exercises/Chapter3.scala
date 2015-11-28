@@ -4,30 +4,29 @@ import scala.collection.mutable.ArrayBuffer
 // All the toList inside the println's are just so that the automatic toString produces something informative.
 object Chapter3 extends App {
   // 1
-  def randArr(len: Int) = {
-    (for (i <- 1 to len) yield util.Random.nextInt(11) - 5).toArray // Range [-5, 5]  ( [] mean inclusive )
-  }
-  val a = randArr(10)
+  def fill(n: Int) = Array(0 to n - 1: _*)
+  val a = fill(10)
   println(a.toList)
 
   // 2
-  def swapPairsInPlace(arr: Array[Int]) = {
-    for (i <- 0 until (if (arr.length % 2 == 0) arr.length else arr.length - 1, 2)) {
-      val t = arr(i)
-      arr(i) = arr(i + 1)
-      arr(i + 1) = t
+  def switch(a: Array[Int]) = {
+    for (i <- a.indices; current = a(i); nextI = i + 1 if i != a.length - 1 && i % 2 == 0) {
+      a(i) = a(nextI)
+      a(nextI) = current
     }
-    arr
+  
+    a
   }
-  println(swapPairsInPlace(a.clone).toList)
+  println(switch(a.clone).toList)
   // odd one test
-  println(swapPairsInPlace(Array.concat(a, Array(2))).toList)
+  println(switch(Array.concat(a, Array(2))).toList)
 
   // 3
   def swapPairs(arr: Array[Int]) = {
-    (for (i <- 0 until arr.length)
-      // first conditional takes care of the odd-length case
-      yield if (i == arr.length - 1 & i % 2 == 0) arr(i) else if (i % 2 == 0) arr(i + 1) else arr(i - 1)).toArray
+    for (i <- a.indices; last = a.indices.last)
+      yield if (i == last & i % 2 == 0) a(i)
+        else if (i % 2 == 0) a(i + 1)
+        else a(i - 1)
   }
   val q2 = swapPairs(a)
   println(q2.toList)
@@ -35,22 +34,23 @@ object Chapter3 extends App {
   println(swapPairs(Array.concat(a, Array(3))).toList);
 
   // 4
-  def posThenNeg(arr: Array[Int]) = {
-    Array.concat(for (i <- arr if i > 0) yield i, for (i <- arr if i <= 0) yield i)
+  def separateNegative(a: Array[Int]) = {
+    Array.concat(
+      for (el <- a if el < 0) yield el,
+      for (el <- a if el == 0) yield el,
+      for (el <- a if el > 0) yield el
+    )
   }
-  println(posThenNeg(a).toList)
+  println(separateNegative(a).toList)
 
   // 5
-  val dbl = Array(0.5, 1.2, 3.7, 4.1, 2.2)
-  println(dbl.sum / dbl.length)
+  val dbl = Array(10.2, 3.2, 4)
+  def avg(a: Array[Double]) = a.sum / a.length
+  println(avg(dbl))
 
   // 6
-  var aClone = a.clone
-  util.Sorting.quickSort(aClone)
-  aClone = aClone.reverse // Warn: This creates a copy which quicksort does not.
-  println(aClone.toList)
-  val aBuf = a.toBuffer
-  println(aBuf.sortWith(_ > _)) // Warn: Book example does not compile. aBuf.sortBy(-_) also works
+  println(a.sorted.reverse.toList) // Warn: This creates a copy 
+  println(a.toBuffer.sortWith(_ > _)) // Warn: Book example does not compile. aBuf.sortBy(-_) also works
 
   // 7
   println(a.distinct.toList)
@@ -62,10 +62,17 @@ object Chapter3 extends App {
 //  println((for (elem <- a if elem % 2 == 0) yield 2 * elem).toList)
   // Here's a filter (to pick even numbers) and map-with-anonymous-function (to double them) solution.
   // _ * 2   is the shorthand for   (x: Int) => 2 * x   ?
-  println(a.filter(_ % 2 == 0).map(_ * 2).toList) // filter reminds me of Django :)
+  val c = new ArrayBuffer[Int]
+  c ++= Array(1, 3, 5, -2, 3, -4, 2)
+  (for (i <- c.indices if c(i) < 0) yield i).drop(1).foreach(i => c.remove(i))
+  println(c.toList)
 
   // 9
-  println(java.util.TimeZone.getAvailableIDs().filter(_.startsWith("America/")).map(_.stripPrefix("America/")).toList)
+  val timeZones = java.util.TimeZone.getAvailableIDs()
+    .filter(_.startsWith("America/"))
+    .map(_.stripPrefix("America/"))
+    .sorted
+  println(timeZones.toList)
 
   // 10
   import java.awt.datatransfer._
