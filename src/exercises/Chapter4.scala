@@ -4,44 +4,39 @@ package exercises
 // see what the consequences are through this exercise.
 object Chapter4 extends App {
   // 1
-  val wishlist: Map[String, Double] = Map(
-    "Elephantine Braille Input Device" -> 322000,
-    "Microsoft Word 95" -> 10,
-    "4TB Ram Drive" -> 32000,
-    "Apple" -> 0.60)
-  println(wishlist)
-  println(for ((k, v) <- wishlist) yield k -> (v * 0.9))
+  val prices = Map("Mac Book pro" -> 2300, "Mac Book air" -> 1330)
+  val withDiscounts = prices.mapValues(_ * 0.9)
+  println(prices.toList)
+  println(withDiscounts.toList)
 
   // 2
   {
     val in = new java.util.Scanner(new java.io.File("files/scanned-file.txt"))
     val occurrences = scala.collection.mutable.Map[String, Int]() withDefaultValue 0  // awesome
     while(in.hasNext) occurrences(in.next) += 1 // previous line's "awesome" makes this easy
-    println(occurrences.toList.sortBy({_._2}).reverse)
+    println(occurrences.toList)
   }
 
   // 3
   {
     val in = new java.util.Scanner(new java.io.File("files/scanned-file.txt"))
-    var wordCounts = Map[String, Int]() withDefault (_ => 0)
-    while (in hasNext) {
-      val key = in next
-      val currentCount = wordCounts(key)
-      wordCounts = wordCounts - key + (key -> (currentCount + 1))
+    var occurrences = Map[String, Int]() withDefaultValue 0
+    while(in.hasNext) {
+      val word = in.next
+      occurrences = occurrences.updated(word, occurrences(word) + 1)
     }
-    println(wordCounts)
+    println(occurrences.toList)
   }
 
   // 4
   {
     val in = new java.util.Scanner(new java.io.File("files/scanned-file.txt"))
-    var wordCounts = collection.immutable.SortedMap[String, Int]() withDefault (_ => 0)
-    while (in hasNext) {
-      val key = in next
-      val currentCount = wordCounts(key)
-      wordCounts = wordCounts - key + (key -> (currentCount + 1))
+    var occurrences = Map[String, Int]() withDefaultValue 0
+    while(in.hasNext) {
+      val word = in.next
+      occurrences = occurrences.updated(word, occurrences(word) + 1)
     }
-    println(wordCounts)
+    println(occurrences.toList.sortBy({_._2}).reverse)
   }
 
   // 5
