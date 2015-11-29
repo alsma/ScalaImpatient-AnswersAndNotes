@@ -7,9 +7,10 @@ object Chapter5 extends App {
   // 1
   // copied and modified from page 52
   class Counter {
-    private var value = Int.MaxValue - 1
+    private var value = 0
     def increment() { if (value < Int.MaxValue) value += 1 }
     def current() = value
+  
     override def toString() = "Counter:" + value
   }
   val c = new Counter
@@ -21,13 +22,12 @@ object Chapter5 extends App {
 
   // 2 seems kind of silly that balance is read only though we provide two mutators? Assuming "read-only" means only
   // public getters and no setters, here's a possibility.
-  class BankAccount() {
-    private var _balance = 0.0
-    def balance = _balance // This sucks to have only g, yet another source of ++unreadableCode
-    // Check for an alternative  http://stackoverflow.com/questions/6641501/scala-public-getter-with-private-setter
-    def withdraw(money: Double) = _balance -= money
-    def deposit(money: Double) = _balance += money
-    override def toString = "Balance:" + balance
+  class BankAccount {
+    private var balance: BigDecimal = 0
+    def deposit(amount: BigDecimal) { balance += amount }
+    def withdraw(amount: BigDecimal) { balance -= amount }
+  
+    override def toString = "Balance: " + balance
   }
   val ba = new BankAccount
   println(ba)
