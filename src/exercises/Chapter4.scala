@@ -42,15 +42,14 @@ object Chapter4 extends App {
   // 5
   {
     val in = new java.util.Scanner(new java.io.File("files/scanned-file.txt"))
-    val wordCounts = new java.util.TreeMap[String, Int]
-    while (in hasNext) {
-      val key = in next
-      // If we omit both the . and () for "in.next()", the compiler sees ambiguity here. Need one of those or a blank line!
-
-      if (!(wordCounts containsKey key)) wordCounts put (key, 0)
-      wordCounts put (key, (wordCounts get key) + 1) // Just awful, parens (or dots) required, or else order of ops will cause wrong behavior.
+    var occurrences = new java.util.TreeMap[String, Int]()
+    while (in.hasNext) {
+      val word = in.next
+      val current = Option(occurrences.get(word))
+      occurrences.put(word, current.getOrElse(0) + 1)
     }
-    println(wordCounts)
+
+    println(occurrences)
   }
 
   // 6
@@ -66,22 +65,20 @@ object Chapter4 extends App {
   println(stringsToCalConst)
 
   // 7
-  val props = collection.JavaConversions asMap (System getProperties)
-  val maxLengthKey = ((props keySet) toList) maxBy (_ size) // '.' would make this a lot easier. Many extra parens are necessary.
-  for ((k, v) <- props) {
-    println(k + " " * ((maxLengthKey size) - (k size)) + " | " + v) // This makes a good case why being pro-whitespace can be dead wrong.
-  }
+  val props = collection.JavaConversions.propertiesAsScalaMap(System.getProperties)
+  var longest = props.keys.maxBy(_.length).length
+  for((key, v) <- props) println(key.padTo(longest, " ").mkString + " | " + v)
 
   // 8
   val arr = Array(-5, 0, 5, 9, -2, 17, 3)
-  def minmax(values: Array[Int]) = {
-    (values min, values max)
-  }
+  def minmax(values: Array[Int]) = values.min -> values.max
   println(minmax(arr))
 
   // 9
   def lteqgt(values: Array[Int], v: Int) = {
-    ((values filter (_ < v)) size, (values filter (_ == v)) size, (values filter (_ > v)) size) // All except tuple's parens could be eliminated with '.'
+    val ltAndOther = values.partition(_ < v)
+    val eqAndGt = ltAndOther._2.partition(_ == v)
+    (ltAndOther._1.length, eqAndGt._1.length, eqAndGt._2.length)
   }
   println(lteqgt(arr, 0))
 
