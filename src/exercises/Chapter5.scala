@@ -39,33 +39,29 @@ object Chapter5 extends App {
   // 3
   {
     class Time(val hrs: Int, val min: Int) {
-      def before(other: Time) = hrs < other.hrs || hrs == other.hrs && min < other.min
-      override def toString = hrs + ":" + min
+      def before(that: Time) = hrs < that.hrs || (hrs == that.hrs && min < that.min)
     }
-    val noonThirty = new Time(12, 30)
-    val sixAm = new Time(6, 0)
-    val sleepyTime = new Time(19, 0) // <- old man
-    println("12:30 means " + noonThirty.hrs + " hours and " + noonThirty.min + " minutes") // still needs to work in #4
-    println("12:30 before 6:00 = " + noonThirty.before(sixAm))
-    println("12:30 before 19:00 = " + noonThirty.before(sleepyTime))
-    println("12:30 before 12:30 = " + noonThirty.before(noonThirty))
+    object Time {
+      def apply(hrs: Int, min: Int) = new Time(hrs, min)
+    }
+    assert(Time(12, 20).before(Time(12, 25)))
+    assert(Time(12, 20).before(Time(13, 25)))
+    assert(!Time(14, 20).before(Time(13, 25)))
   }
 
   // 4
   // I think this keeps the public API the same
   {
-    class Time(val hrs: Int, val min: Int) {
-      private val minSinceMidnight = hrs * 60 + min
-      def before(other: Time) = minSinceMidnight < other.minSinceMidnight
-      override def toString = hrs + ":" + min
+    class Time(hrs: Int, min: Int) {
+      private val time = hrs * 60 + min
+      def before(that: Time) = time < that.time
     }
-    val noonThirty = new Time(12, 30)
-    val sixAm = new Time(6, 0)
-    val sleepyTime = new Time(19, 0) // <- old man
-    println("12:30 means " + noonThirty.hrs + " hours and " + noonThirty.min + " minutes") // still needs to work in #4
-    println("12:30 before 6:00 = " + noonThirty.before(sixAm))
-    println("12:30 before 19:00 = " + noonThirty.before(sleepyTime))
-    println("12:30 before 12:30 = " + noonThirty.before(noonThirty))
+    object Time {
+      def apply(hrs: Int, min: Int) = new Time(hrs, min)
+    }
+    assert(Time(12, 20).before(Time(12, 25)))
+    assert(Time(12, 20).before(Time(13, 25)))
+    assert(!Time(14, 20).before(Time(13, 25)))
   }
 
   // 5
