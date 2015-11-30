@@ -109,33 +109,29 @@ object Chapter8 extends App {
 
   // 4
   abstract class Item {
-    def price: Float
+    def price: BigDecimal
     def description: String
-    // added to simplify prints
+    
     override def toString = description + ": " + price
   }
-
-  // override is optional for implementing abstracts
-  class SimpleItem(override val price: Float, override val description: String) extends Item
-  // Using Traversable as a sort of common type for all collection-y things. 
-
-  class Bundle(val items: collection.mutable.Set[Item], override val description: String) extends Item {
-    // This trick just creates a collection of the prices of the items, and then calls sum on that.
-    override def price = items.map(_.price).sum
-    def add(item: Item) = items += item
+  
+  class SimpleItem(override val price: BigDecimal, override val description: String) extends Item
+  
+  class Bundle(val items: ListBuffer[Item] = ListBuffer[Item]()) extends Item {
+    def +=(item: Item) { items += item }
+  
+    def price: BigDecimal = items.foldLeft(BigDecimal(0))((sum, item: Item) => sum + item.price)
+    def description: String = items.map(_.description).mkString(", ")
   }
   {
-    val bandaids = new SimpleItem(0.25f, "Band-aids 20pk")
-    val gauze = new SimpleItem(1.20f, "Gauze 20m")
-    val sanitizer = new SimpleItem(2.19f, "Sanitizer 200ml")
-    val first_aid_kit = new Bundle(collection.mutable.HashSet(bandaids, gauze), "Patching, First-Aid Kit")
-    println(bandaids)
-    println(gauze)
-    println(first_aid_kit)
-    first_aid_kit.add(sanitizer)
-    println(first_aid_kit)
+    val a = new SimpleItem(100, "test 100")
+    val b = new SimpleItem(200, "test 200")
+    val composite = new Bundle()
+    composite += a
+    composite += b
+    composite.price
+    composite.description
   }
-
 
   // 5
   class Point(val x: Double, val y: Double) {
