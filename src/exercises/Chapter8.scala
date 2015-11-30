@@ -1,69 +1,69 @@
 package exercises
 
 object Chapter8 extends App {
-  // copied from the text, and added print statements, modified balance to 'protected'
-  class BankAccount(initialBalance: Double) {
-    protected var balance = initialBalance
-    println(toString + " New account!")
-    def deposit(amount: Double) = {
-      balance += amount;
-      println(toString + " Deposit")
+  class BankingAccount(_balance: BigDecimal) {
+    private var balance = _balance
+  
+    def deposit(amount: BigDecimal) = {
+      balance += amount
       balance
     }
-    def withdraw(amount: Double) = {
-      balance -= amount;
-      println(toString + " Withdrawal");
+  
+    def withdraw(amount: BigDecimal) = {
+      balance -= amount
       balance
     }
-    // added toString to simplify printouts
-    override def toString = "Balance: " + balance
+  
+    def currentBalance = balance
+  
+    override def toString: String = "Balance: " + currentBalance
   }
-
-
+  
   // 1
-  class CheckingAccount(initialBalance: Double) extends BankAccount(initialBalance) {
-    // Implemented assuming 'private var balance' in the base class
-    override def deposit(amount: Double) = { super.deposit(amount - 10) }
-    override def withdraw(amount: Double) = { super.withdraw(amount + 10) }
+  class CheckingAccount(_balance: BigDecimal) extends BankingAccount(_balance) {
+    val FEE = 1
+  
+    override def deposit(amount: BigDecimal): BigDecimal = super.deposit(amount - FEE)
+  
+    override def withdraw(amount: BigDecimal): BigDecimal = super.withdraw(amount + FEE)
   }
-  {
-    val account = new CheckingAccount(100)
-    account.deposit(50)
-    account.withdraw(50)
-  }
-
-
+  
+  val regular = new BankingAccount(100)
+  regular.deposit(100)
+  regular.withdraw(50)
+  println(regular)
+  
   // 2
-  class SavingsAccount(initialBalance: Double) extends BankAccount(initialBalance) {
-    val monthlyInterestRate = 0.02
-    private var freeMonthlyTrx = 3
-    // Unless I'm mistaken, the BankAccount's 'private var balance' means we can't get to it at all in a subclass. So
-    // I think the text is probably out of alignment with the intent, and I've changed the base class to have
-    // 'protected var balance'.
-    def earnMonthlyInterest = {
-      balance += balance * monthlyInterestRate
-      freeMonthlyTrx = 3
-      println(toString + " Accrued interest")
+  class SavingAccount(_balance: BigDecimal) extends BankingAccount(_balance) {
+    val MONTHLY_SAVING_RATE = 10
+    val FEE = 2
+  
+    val FREE_TX_COUNT = 3
+  
+    private var txCount = 0
+  
+    override def deposit(amount: BigDecimal): BigDecimal = {
+      txCount += 1
+      super.deposit(amount - (if (txCount > FREE_TX_COUNT) FEE else 0))
     }
-    override def deposit(amount: Double) = {
-      super.deposit(amount - (if (freeMonthlyTrx > 0) 0 else 10))
-      freeMonthlyTrx -= 1
-      balance
+  
+    override def withdraw(amount: BigDecimal): BigDecimal = {
+      txCount += 1
+      super.withdraw(amount + (if (txCount > FREE_TX_COUNT) FEE else 0))
     }
-    override def withdraw(amount: Double) = {
-      super.withdraw(amount + (if (freeMonthlyTrx > 0) 0 else 10))
-      freeMonthlyTrx -= 1
-      balance
+  
+    def earnMonthlyInterest() = {
+      super.deposit(currentBalance * (BigDecimal(MONTHLY_SAVING_RATE) / 100))
+      txCount = 0
+      
+      currentBalance
     }
-  }
-  {
-    val account = new SavingsAccount(1000)
-    account.earnMonthlyInterest
-    for (i <- 1 to 4) account.withdraw(100)
-    account.earnMonthlyInterest
-    for (i <- 1 to 4) account.deposit(100)
   }
 
+  val saving = new SavingAccount(100)
+  saving.deposit(11)
+  saving.earnMonthlyInterest()
+  println(saving)
 
   // 3
   // Trying to come up with a relatively original example, and some sensible members?
