@@ -9,12 +9,13 @@ object Chapter6 extends App {
   }
 
   // 2
-  class UnitConversion(val conversionFactor: Double) {
-    def convert(units: Double) = conversionFactor * units
+  abstract class UnitConversion protected (val conversionRate: Double) {
+    def convert(value: Double) = value * conversionRate
   }
-  object InchesToCentimetres extends UnitConversion(2.54)
-  object GallonsToLitres extends UnitConversion(3.78541178)
-  object MilesToKilometres extends UnitConversion(1.609344)
+  
+  class InchesToCentimeters extends UnitConversion(2.54)
+  class GallonToLiters extends UnitConversion(3.78541)
+  class MilesToKilometers extends UnitConversion(1.60934)
 
   // 3
   object Origin extends java.awt.Point
