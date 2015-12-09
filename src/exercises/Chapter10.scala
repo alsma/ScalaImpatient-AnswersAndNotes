@@ -1,5 +1,3 @@
-import java.beans.{PropertyChangeEvent, PropertyChangeListener}
-
 object Chapter10 extends App {
   // 1
   {
@@ -91,7 +89,7 @@ object Chapter10 extends App {
 
   // 5
   {
-    import java.beans.PropertyChangeSupport
+    import java.beans.{PropertyChangeSupport, PropertyChangeEvent, PropertyChangeListener}
 
     trait PropertyChangeSupportLike {
       val delegate = new PropertyChangeSupport(this)
@@ -103,12 +101,112 @@ object Chapter10 extends App {
       def this() = this(0, 0)
     }
 
-    val point  = new BeansPoint(2, 5)
+    val point = new BeansPoint(2, 5)
     point.addPropertyChangeListener("x", new PropertyChangeListener {
       override def propertyChange(evt: PropertyChangeEvent): Unit = println("New property value X: %d" format evt.getNewValue)
     })
 
     point.x = 3
     point.firePropertyChange("x", 2, 3)
+  }
+
+  // 6
+  {
+    import java.awt.{Component, Container}
+
+    trait JComponent extends Component
+    trait JContainer extends Container with JComponent
+
+    class JButton extends JComponent
+    class JPanel extends JContainer
+
+    assert((new JButton).isInstanceOf[Component])
+    assert((new JButton).isInstanceOf[JComponent])
+    assert(!(new JButton).isInstanceOf[JContainer])
+    assert(!(new JButton).isInstanceOf[Container])
+
+    assert((new JPanel).isInstanceOf[Component])
+    assert((new JPanel).isInstanceOf[Container])
+    assert((new JPanel).isInstanceOf[JComponent])
+    assert((new JPanel).isInstanceOf[JContainer])
+  }
+
+  // 7
+  {
+    trait PaymentSystem {
+      val provider: String
+      val checkoutURL: String = "/checkout"
+
+      println("PaymentSystem constructor")
+    }
+
+    trait Operation {
+      val fee: Double
+      println("Operation constructor")
+    }
+
+    trait Withdraw extends Operation {
+      println("Withdraw constructor")
+    }
+
+    trait Deposit extends Operation {
+      println("Deposit constructor")
+    }
+
+    trait ExpressCheckout extends PaymentSystem {
+      override val checkoutURL: String = "/checkout/express"
+      println("ExpressCheckout constructor")
+    }
+
+    class YandexMoney extends PaymentSystem with Withdraw with Deposit with ExpressCheckout {
+      val provider: String = "advcash.yandex_money"
+      val fee: Double = 0.03
+
+      println("Checkout URL " + checkoutURL)
+    }
+
+    val ps = new YandexMoney
+    // PaymentSystem constructor
+    // Operation constructor
+    // Withdraw constructor
+    // Deposit constructor
+    // ExpressCheckout constructor
+    // Checkout URL /checkout/express
+  }
+
+  // 8 and 9
+  {
+    import java.io.{InputStream, ByteArrayInputStream}
+
+    trait Logger { def log(msg: String) }
+
+    trait PrintLogger extends Logger { def log(msg: String) = println(msg) }
+
+
+    trait Buffering {
+      this: InputStream with Logger =>
+
+      val BUF_SIZE: Int = 3
+      private val buffer = new Array[Byte](BUF_SIZE)
+      private var bufsize: Int = 0
+      private var position: Int = 0
+
+      override def read(): Int = {
+        if (position >= bufsize) {
+          bufsize = this.read(buffer, 0, BUF_SIZE)
+          log("buffered %d bytes: %s".format(bufsize, buffer.mkString(", ")))
+          if (bufsize > 0) return -1
+          position = 0
+        }
+        position += 1
+        buffer(position - 1)
+      }
+    }
+
+    // 2) convert that String to an InputStream
+    val is = new ByteArrayInputStream("1234567890-!@#$%^%&*(".getBytes) with Buffering with PrintLogger
+    while (is.read != -1) {
+
+    }
   }
 }
