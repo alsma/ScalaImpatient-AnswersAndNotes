@@ -206,5 +206,29 @@ object Chapter10 extends App {
 
     val is = new ByteArrayInputStream("123456789".getBytes) with Buffering with PrintLogger
     println(Stream.continually(is.read).takeWhile(_ != -1).map(_.toChar).toList)
+    // read: 4
+    // read: 4
+    // read: 1
+    // read: -1
+    // List(1, 2, 3, 4, 5, 6, 7, 8, 9)
+  }
+
+  // 10
+  {
+    import java.io.{InputStream, ByteArrayInputStream}
+
+    trait IterableInputStream extends InputStream with Iterable[Byte] {
+      def iterator: Iterator[Byte] = new InputStreamIterator(this)
+
+      class InputStreamIterator(is: IterableInputStream) extends Iterator[Byte] {
+        def hasNext: Boolean = is.available() > 0
+
+        def next(): Byte = is.read.toByte
+      }
+    }
+
+    val is = new ByteArrayInputStream("123456789".getBytes) with IterableInputStream
+    println({for (b <- is) yield b toChar} toList)
+    // List(1, 2, 3, 4, 5, 6, 7, 8, 9)
   }
 }
