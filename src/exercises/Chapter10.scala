@@ -182,31 +182,29 @@ object Chapter10 extends App {
 
     trait PrintLogger extends Logger { def log(msg: String) = println(msg) }
 
-
     trait Buffering {
       this: InputStream with Logger =>
 
-      val BUF_SIZE: Int = 3
+      val BUF_SIZE = 4
+      private var prevRead = 0
+      private var position = 0
       private val buffer = new Array[Byte](BUF_SIZE)
-      private var bufsize: Int = 0
-      private var position: Int = 0
 
       override def read(): Int = {
-        if (position >= bufsize) {
-          bufsize = this.read(buffer, 0, BUF_SIZE)
-          log("buffered %d bytes: %s".format(bufsize, buffer.mkString(", ")))
-          if (bufsize > 0) return -1
+        if (position >= prevRead) {
+          prevRead = this.read(buffer, 0, BUF_SIZE)
           position = 0
+
+          log("read: " + prevRead)
+          if (prevRead == -1) return -1
         }
+
         position += 1
         buffer(position - 1)
       }
     }
 
-    // 2) convert that String to an InputStream
-    val is = new ByteArrayInputStream("1234567890-!@#$%^%&*(".getBytes) with Buffering with PrintLogger
-    while (is.read != -1) {
-
-    }
+    val is = new ByteArrayInputStream("123456789".getBytes) with Buffering with PrintLogger
+    println(Stream.continually(is.read).takeWhile(_ != -1).map(_.toChar).toList)
   }
 }
