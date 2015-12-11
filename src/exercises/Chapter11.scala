@@ -33,7 +33,7 @@ object Chapter11 extends App{
     println (x pow 9 + 1)
     // 10000000000
 
-    // thought would work with following name
+    // though would work with following name
     val z = new BigInt(new BigInteger("10")) {
       def =**(p:Int) = pow(p)
     }
