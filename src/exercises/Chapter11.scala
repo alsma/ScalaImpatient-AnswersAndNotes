@@ -142,4 +142,75 @@ object Chapter11 extends App{
     val t = Table() | "Java" | "Scala" || "Gosling" | "Odersky" || "JVM" | "JVM,.NET"
     println(t)
   }
+
+  // 6
+  {
+    class ASCIIArt(val art: String) {
+      def +(that: ASCIIArt) = {
+        val parts = art split "\n"
+        val maxLength = parts.map(_.length).max + 1
+
+        new ASCIIArt(parts zipAll (that.art split "\n", "", "") map { x => x._1.padTo(maxLength, ' ') + x._2 } mkString "\n")
+      }
+
+      def +| (that: ASCIIArt) = new ASCIIArt(art + "\n" + that.art)
+
+      override def toString = art
+    }
+
+    val x = new ASCIIArt("""
+ /\_/\
+( ' ' )
+(  -  )
+ | | |
+(__|__)
+""")
+    val y = new ASCIIArt("""
+   -----
+ / Hello \
+<  Scala |
+ \ Coder /
+   -----
+""")
+    println(x + y)
+    println(x +| y)
+  }
+
+  // 9
+  {
+    object RichFile {
+      def unapply(f: String): Option[(String, String, String)] = {
+        val pos = f lastIndexOf '/'
+
+        if (pos == -1) None
+        else {
+          f.take(pos) :: f.drop(pos + 1).split('.').toList ::: Nil match {
+            case Seq(a, b, c) => Some((a, b, c))
+            case _ => None
+          }
+        }
+      }
+    }
+
+    println("/usr/local/test.txt" match {
+      case RichFile(path, name, ext) => "Path: %s name: %s ext: %s" format(path, name, ext)
+      case _ => "Bad fullpath"
+    })
+  }
+
+  // 10
+  {
+    {
+      object RichFile {
+        def unapplySeq(f: String): Option[Seq[String]] = {
+          Some(f stripMargin '/' split "/")
+        }
+      }
+
+      println("/usr/local/test.txt" match {
+        case RichFile(rootFolder, _, filename) => "Root: %s name: %s" format(rootFolder, filename)
+        case _ => "Bad fullpath"
+      })
+    }
+  }
 }
