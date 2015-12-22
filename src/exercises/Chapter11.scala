@@ -1,4 +1,6 @@
-object Chapter11 extends App{
+package exercises
+
+object Chapter11 extends App {
   // 1
   {
     println(3 + 4 -> 5)
@@ -17,9 +19,18 @@ object Chapter11 extends App{
 
     import java.math.BigInteger
 
-    val x = new BigInt(new BigInteger("10")) {
-      def **(p:Int) = pow(p)
+    class RichBigInt(i: BigInt) {
+      def **(p: Int) = i pow p
+      def =**(p: Int) = i pow p
     }
+
+    object RichBigInt {
+      implicit def bigInt2RichBigInt(i: BigInt): RichBigInt = new RichBigInt(i)
+    }
+
+    import RichBigInt.bigInt2RichBigInt
+
+    val x = new BigInt(new BigInteger("10"))
 
     // works as expected
     println(x ** 10)
@@ -29,14 +40,12 @@ object Chapter11 extends App{
     // 1000000001
 
     // however char as a first symbol in operator name means the lowest precedence, that's why it works
-    println (x pow 9 + 1)
+    println(x pow 9 + 1)
     // 10000000000
 
     // thought would work with following name
-    val z = new BigInt(new BigInteger("10")) {
-      def =**(p:Int) = pow(p)
-    }
-    println (z =** 9 + 1)
+    val z = new BigInt(new BigInteger("10"))
+    println(z =** 9 + 1)
     // 10000000000
   }
 
@@ -81,8 +90,8 @@ object Chapter11 extends App{
         this(d * 100 + c)
       }
 
-      def + (that: Money) = new Money (that.cents + cents)
-      def - (that: Money) = new Money (cents - that.cents)
+      def +(that: Money) = new Money(that.cents + cents)
+      def -(that: Money) = new Money(cents - that.cents)
 
       def compare(that: Money): Int = cents compare that.cents
       override def equals(obj: scala.Any): Boolean = obj match {
@@ -95,8 +104,8 @@ object Chapter11 extends App{
       def apply(d: Int, c: Int) = new Money(d, c)
     }
 
-    assert(Money(1, 75) + Money (0, 50) == Money(2, 25))
-    assert(Money(1, 75) > Money (0, 50))
+    assert(Money(1, 75) + Money(0, 50) == Money(2, 25))
+    assert(Money(1, 75) > Money(0, 50))
   }
 
   // 5
@@ -122,15 +131,15 @@ object Chapter11 extends App{
       val tagName: String = "table"
 
       def |(html: String) = { children.last.children += new Cell(html); this }
-      def || (html: String) = { children += new Row(); |(html) }
+      def ||(html: String) = { children += new Row(); |(html) }
     }
 
-    class Row extends  HtmlContainer[Cell] {
+    class Row extends HtmlContainer[Cell] {
       val children: ArrayBuffer[Cell] = new ArrayBuffer[Cell]
       val tagName: String = "tr"
     }
 
-    class Cell(html: String) extends HtmlEl{
+    class Cell(html: String) extends HtmlEl {
       val tagName: String = "td"
       override val innerHTML = html
     }
@@ -150,10 +159,10 @@ object Chapter11 extends App{
         val parts = art split "\n"
         val maxLength = parts.map(_.length).max + 1
 
-        new ASCIIArt(parts zipAll (that.art split "\n", "", "") map { x => x._1.padTo(maxLength, ' ') + x._2 } mkString "\n")
+        new ASCIIArt(parts zipAll(that.art split "\n", "", "") map { x => x._1.padTo(maxLength, ' ') + x._2 } mkString "\n")
       }
 
-      def +| (that: ASCIIArt) = new ASCIIArt(art + "\n" + that.art)
+      def +|(that: ASCIIArt) = new ASCIIArt(art + "\n" + that.art)
 
       override def toString = art
     }

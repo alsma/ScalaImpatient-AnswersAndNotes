@@ -1,6 +1,5 @@
 package exercises
 
-
 object Chapter9 extends App {
 
   // 1
@@ -23,7 +22,7 @@ object Chapter9 extends App {
     // Not writing to the same file on this one like the question asked.
     val lines = source.getLines.toArray // all into memory
     for (line <- lines) {
-      val tokenz = line.split("""\t""")
+      val tokenz = line.split( """\t""")
       for (token <- tokenz) out.print(token + " " * (n - token.length))
       out.println
     }
@@ -31,13 +30,13 @@ object Chapter9 extends App {
   }
 
   // 3
-  for (line <- io.Source.fromFile("files/LoremIpsum.txt").getLines) for (word <- line.split("""\s+""") if word.size > 12) println(word)
+  for (line <- io.Source.fromFile("files/LoremIpsum.txt").getLines) for (word <- line.split( """\s+""") if word.length > 12) println(word)
 
   // 4
   {
-    val floats = io.Source.fromFile("files/numbers.txt").mkString.split("""\s+""").map(_.toFloat) // sick
+    val floats = io.Source.fromFile("files/numbers.txt").mkString.split( """\s+""").map(_.toFloat) // sick
     println(floats.sum)
-    println(floats.sum / floats.size)
+    println(floats.sum / floats.length)
     println(floats.max)
     println(floats.min)
   }
@@ -46,7 +45,7 @@ object Chapter9 extends App {
   for (i <- 0 to 20) {
     val whole = math.pow(2, i).toInt.toString
     val frac = math.pow(2, -i)
-    println(whole + " " * (10 - whole.size) + frac)
+    println(whole + " " * (10 - whole.length) + frac)
   }
 
   // 6
@@ -67,7 +66,7 @@ object Chapter9 extends App {
     // The regex means (digits with a period within or ending it) or (a period in front of digits).In other words, each
     // token is all the stuff between valid floating point numbers, where these are all valid floating points:
     //   5.  2.5  -.2  (as they are in Java/Scala)
-    val strings = file.split("""-?(\d\.\d*|\.\d+)""").toList
+    val strings = file.split( """-?(\d\.\d*|\.\d+)""").toList
     // Printing Strings surround by ^startuntilend$ to clarify result.
     for (string <- strings) println("^" + string + "$")
   }
@@ -79,7 +78,7 @@ object Chapter9 extends App {
     import io.Source
     val file = Source.fromFile("files/placekitten.com.html").mkString
     val regex = """<\s*?img\s+[^>]*\s+src="(.*?)"\s+[^>]*>""".r
-    for (regex(imgsrc) <- regex.findAllIn(file) ) println(imgsrc)
+    for (regex(imgsrc) <- regex.findAllIn(file)) println(imgsrc)
   }
 
   // 9

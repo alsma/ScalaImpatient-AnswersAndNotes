@@ -1,32 +1,40 @@
 package exercises
+
 import scala.collection.mutable.ArrayBuffer
 
 // All the toList inside the println's are just so that the automatic toString produces something informative.
 object Chapter3 extends App {
   // 1
-  def fill(n: Int) = Array(0 to n - 1: _*)
   val a = fill(10)
-  println(a.toList)
+  def fill(n: Int) = Array(0 to n - 1: _*)
+
+  {
+
+    val a = fill(10)
+    println(a.toList)
+  }
 
   // 2
-  def switch(a: Array[Int]) = {
-    for (i <- a.indices; current = a(i); nextI = i + 1 if i != a.length - 1 && i % 2 == 0) {
-      a(i) = a(nextI)
-      a(nextI) = current
+  {
+    def switch(a: Array[Int]) = {
+      for (i <- a.indices; current = a(i); nextI = i + 1 if i != a.length - 1 && i % 2 == 0) {
+        a(i) = a(nextI)
+        a(nextI) = current
+      }
+
+      a
     }
-  
-    a
+    println(switch(a.clone).toList)
+    // odd one test
+    println(switch(Array.concat(a, Array(2))).toList)
   }
-  println(switch(a.clone).toList)
-  // odd one test
-  println(switch(Array.concat(a, Array(2))).toList)
 
   // 3
   def swapPairs(arr: Array[Int]) = {
     for (i <- a.indices; last = a.indices.last)
       yield if (i == last & i % 2 == 0) a(i)
-        else if (i % 2 == 0) a(i + 1)
-        else a(i - 1)
+      else if (i % 2 == 0) a(i + 1)
+      else a(i - 1)
   }
   val q2 = swapPairs(a)
   println(q2.toList)
@@ -59,7 +67,7 @@ object Chapter3 extends App {
   // Warn: Maybe an older version of scala, drop behaved differently? This question is nonsense to all of 2.9.1's
   // IndexedSeqOptimized.drop(Int) .dropRight .dropWhile  as I understand them.
   // Here's the example. Warn again!: Text does not compile, s.b. 'if elem' not 'if a'
-//  println((for (elem <- a if elem % 2 == 0) yield 2 * elem).toList)
+  // println((for (elem <- a if elem % 2 == 0) yield 2 * elem).toList)
   // Here's a filter (to pick even numbers) and map-with-anonymous-function (to double them) solution.
   // _ * 2   is the shorthand for   (x: Int) => 2 * x   ?
   val c = new ArrayBuffer[Int]
@@ -76,9 +84,10 @@ object Chapter3 extends App {
 
   // 10
   import java.awt.datatransfer._
+
   val flavors = SystemFlavorMap.getDefaultFlavorMap().asInstanceOf[SystemFlavorMap]
-  println(collection.JavaConversions.asBuffer(flavors.getNativesForFlavor(DataFlavor.imageFlavor)))
+  println(collection.JavaConversions.asScalaBuffer(flavors.getNativesForFlavor(DataFlavor.imageFlavor)))
   // Found this other fat way, but probably noms up extra cycles for no reason (fat). Interestingly you get an explicit
   // ArrayBuffer instead of just a Buffer like the previous line.
-//  println(flavors.getNativesForFlavor(DataFlavor.imageFlavor).toArray.toBuffer)
+  //  println(flavors.getNativesForFlavor(DataFlavor.imageFlavor).toArray.toBuffer)
 }

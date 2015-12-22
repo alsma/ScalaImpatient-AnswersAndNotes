@@ -1,5 +1,6 @@
 package exercises
-import scala.reflect.BeanProperty
+
+import scala.beans.BeanProperty
 
 // Not doing the massive '.' omission this time. Going for best balance of concise (Scala generally good for this) and
 // most readable (Scala generally not so good for this), in my humble and perhaps naïve opinion.
@@ -127,7 +128,7 @@ object Chapter5 extends App {
     // see accompanying Java definition. Sometimes Scala IDE freaks out on this mixed code :( Have to project clean
     println(new Chapter5_Java.Car("Ford", "Taurus"))
     println(new Chapter5_Java.Car("Toyota", "Tundra", 2006))
-    println(new Chapter5_Java.Car("Fiat", "European", licensePlate="ABC-123"))
+    println(new Chapter5_Java.Car("Fiat", "European", "ABC-123"))
     val c = new Chapter5_Java.Car("Mystery", "Machine", 1969, "ZOINKS")
     println(c)
     c.licensePlate = "ZOINKS!"
@@ -139,6 +140,8 @@ object Chapter5 extends App {
     class Employee(val name: String, var salary: Double) {
       def this() { this("John Q. Public", 0.0) }
     }
+
+    val x = new Employee()
   }
 
   { // primary constructor + explicit fields version

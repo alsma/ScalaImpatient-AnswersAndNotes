@@ -1,3 +1,5 @@
+package exercises
+
 object Chapter10 extends App {
   // 1
   {
@@ -103,7 +105,7 @@ object Chapter10 extends App {
 
     val point = new BeansPoint(2, 5)
     point.addPropertyChangeListener("x", new PropertyChangeListener {
-      override def propertyChange(evt: PropertyChangeEvent): Unit = println("New property value X: %d" format evt.getNewValue)
+      override def propertyChange(evt: PropertyChangeEvent): Unit = println("New property value X: %d" format evt.getNewValue.asInstanceOf[Int])
     })
 
     point.x = 3
@@ -123,7 +125,6 @@ object Chapter10 extends App {
     assert((new JButton).isInstanceOf[Component])
     assert((new JButton).isInstanceOf[JComponent])
     assert(!(new JButton).isInstanceOf[JContainer])
-    assert(!(new JButton).isInstanceOf[Container])
 
     assert((new JPanel).isInstanceOf[Component])
     assert((new JPanel).isInstanceOf[Container])
@@ -178,9 +179,9 @@ object Chapter10 extends App {
   {
     import java.io.{InputStream, ByteArrayInputStream}
 
-    trait Logger { def log(msg: String) }
+    trait Logger {def log(msg: String)}
 
-    trait PrintLogger extends Logger { def log(msg: String) = println(msg) }
+    trait PrintLogger extends Logger {def log(msg: String) = println(msg)}
 
     trait Buffering {
       this: InputStream with Logger =>
@@ -205,7 +206,7 @@ object Chapter10 extends App {
     }
 
     val is = new ByteArrayInputStream("123456789".getBytes) with Buffering with PrintLogger
-    println(Stream.continually(is.read).takeWhile(_ != -1).map(_.toChar).toList)
+    println(Stream.continually(is.read()).takeWhile(_ != -1).map(_.toChar).toList)
     // read: 4
     // read: 4
     // read: 1
@@ -225,10 +226,11 @@ object Chapter10 extends App {
 
         def next(): Byte = is.read.toByte
       }
+
     }
 
     val is = new ByteArrayInputStream("123456789".getBytes) with IterableInputStream
-    println({for (b <- is) yield b toChar} toList)
+    println({for (b <- is) yield b.toChar }.toList)
     // List(1, 2, 3, 4, 5, 6, 7, 8, 9)
   }
 }

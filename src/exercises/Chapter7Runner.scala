@@ -59,7 +59,7 @@ object Chapter7Runner extends App {
       for ((k,v) <- jMap)  sMap.put(k,v)
       sMap
     }
-    val jMap = new JavaHashMap[String, Int]();
+    val jMap = new JavaHashMap[String, Int]()
     jMap.put("one", 1)
     jMap.put("two", 2)
     jMap.put("three", 3)
@@ -82,7 +82,7 @@ object Chapter7Runner extends App {
     import java.lang.System
     print("Authorization token: ")
     val username = System getProperty "user.name"
-    val password = readLine
+    val password = io.StdIn.readLine
     if ("secret" equals password) println("Hello, " + username + ". Welcome to the real world.")
     else System.err println "Sorry, you are not identified. A robot death squad will be dispatched to your location after 3 failed attempts."
     // You can also use Console just as well. Either way requires one dot to 'err'
@@ -92,5 +92,5 @@ object Chapter7Runner extends App {
   // No way. Not doing this by eye. Have fun, guys. In any IDE that supports Scala (e.g. Eclipse>Scala IDE), put your
   // cursor within 'StringBuilder' below and press F3 (or however you go to the definition). You will recognize many
   // Java things that Scala is shadowing, and some Java things that Scala is aliasing.
-  scala.StringBuilder
+  scala.StringBuilder.newBuilder.append('x')
 }

@@ -116,7 +116,8 @@ object Chapter8 extends App {
   }
   
   class SimpleItem(override val price: BigDecimal, override val description: String) extends Item
-  
+
+  import scala.collection.mutable.ListBuffer
   class Bundle(val items: ListBuffer[Item] = ListBuffer[Item]()) extends Item {
     def +=(item: Item) { items += item }
   
